@@ -1,13 +1,11 @@
-numpy
-pandas
+streamlit
+numpy<2.0
+pandas<3.0
 matplotlib
 yfinance
-streamlit
 plotly
 prophet
 scikit-learn
-tensorflow
+tensorflow==2.15.1
 joblib
 quandl
-streamlit>=1.30.0
-protobuf==3.20.3
