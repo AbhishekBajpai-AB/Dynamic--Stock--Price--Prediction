@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 import streamlit as st
 import matplotlib.pyplot as plt
 import joblib
@@ -151,7 +151,7 @@ plt.show()
 
 st.markdown("""======================================================================================================================================================================""")
 
-model = load_model(r"D:\PROJECT\Stock Price Prediction\LSTM\STOCK.keras")
+model = load_model("LSTM/STOCK.keras")
 st.title('LONG-SHORT TERM MEMORY (LSTM) :-')
 st.write('\n')
 
@@ -226,7 +226,7 @@ df2 = df['Close']
 df2 = pd.DataFrame(df2) 
 df2.columns = ['Close']
 
-loaded_tree = joblib.load(r"D:\PROJECT\Stock Price Prediction\Decision Tree\decision_tree_model.joblib")
+loaded_tree = joblib.load("Decision Tree/decision_tree_model.joblib")
 # Prediction 100 days into the future.
 future_days = 100
 df2['Prediction'] = df2['Close'].shift(-future_days)

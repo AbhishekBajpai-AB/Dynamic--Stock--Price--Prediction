@@ -6,6 +6,6 @@ yfinance
 plotly
 prophet
 scikit-learn
-tensorflow==2.15.1
+tensorflow>=2.16.0,<3.0.0
 joblib
 quandl
