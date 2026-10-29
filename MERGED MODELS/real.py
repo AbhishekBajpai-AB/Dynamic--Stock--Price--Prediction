@@ -123,9 +123,37 @@ def train_lstm_forecast(
         return actual, predicted, test_dates
 
 
+st.markdown(
+    """<style>
+    .stApp {
+        background-color: #0e1117;
+    }
+    .stApp::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-image:
+            linear-gradient(rgba(14, 17, 23, 0.66), rgba(14, 17, 23, 0.72)),
+            url("https://miro.medium.com/max/620/0*dunTLlei47QWR7NR.gif");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        opacity: 0.92;
+    }
+    [data-testid="stAppViewContainer"] > .main {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+    }
+    [data-testid="stHeader"] {
+        background: rgba(14, 17, 23, 0.35);
+    }
+    </style>""",
+    unsafe_allow_html=True,
+)
 st.title("Stock Price Prediction")
-hero_columns = st.columns((2.8, 6, 2))
-hero_columns[1].image("https://miro.medium.com/max/620/0*dunTLlei47QWR7NR.gif")
 intro_columns = st.columns(2)
 intro_columns[0].markdown(
     "Welcome to the Stock Price Predictor. Choose a supported stock and a historical "
