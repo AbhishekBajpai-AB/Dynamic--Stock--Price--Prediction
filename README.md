@@ -1,6 +1,10 @@
-# Stock Price Prediction
+## Stock Price Prediction
 
 A Streamlit dashboard for viewing Yahoo Finance history and comparing three separate forecasting approaches: K-Nearest Neighbors (KNN), Long Short-Term Memory (LSTM), and Decision Tree regression.
+
+## 🌐 Live Demo
+
+Visit the live platform: [Stock Price Prediction](https://dynamic--stock--price--prediction--abhishek.streamlit.app/)
 
 ## What the app shows
 
