@@ -1,116 +1,47 @@
-📈 **Stock Price Prediction**  
+# Stock Price Prediction
 
-📌 **Background Problem** :
+A Streamlit dashboard for viewing Yahoo Finance history and comparing three separate forecasting approaches: K-Nearest Neighbors (KNN), Long Short-Term Memory (LSTM), and Decision Tree regression.
 
-In the ever-evolving landscape of financial markets, accurately predicting stock prices in a timely manner is crucial for investors to make well-informed decisions and effectively manage risks. However, traditional prediction methods often struggle to keep pace with the complexities and rapid changes inherent in market dynamics.  
+## What the app shows
 
-Challenges such as market volatility, information asymmetry among participants, and the influence of external factors like global economic trends and technological advancements further complicate prediction efforts. The absence of a **centralized database**, inconsistent records, and delayed information processing hinders the effectiveness of traditional stock forecasting methods.  
+- Daily open, high, low, close, and volume data for the selected ticker and date range.
+- KNN next-day direction classification and next-day closing-price estimates, evaluated on the latest chronological holdout period.
+- An LSTM trained for the selected ticker, with its final 20% of dates held out for evaluation.
+- A Decision Tree estimate 100 trading days ahead, evaluated on examples whose target dates fall in the latest 20% of the selected history.
 
-To overcome these challenges, we propose an advanced stock price prediction system that leverages **machine learning models** and **real-time data processing techniques** to provide investors with **accurate and timely insights**.  
+The models are evaluated separately; their outputs are not combined into an ensemble. Forecasts use historical market data and are estimates, not investment advice.
 
----
+## Run locally on Windows
 
-🎯 **Problem Statement** : 
+Use 64-bit Python 3.11. From PowerShell in the repository folder:
 
-Existing stock price prediction methods suffer from :   
-- **Inefficiencies in data processing**, leading to inaccuracies and delays.  
-- **Lack of a centralized database**, resulting in inconsistencies in stock market records.  
-- **Limited access to real-time market information**, affecting timely decision-making.  
-- **Manual handling of stock market data**, increasing the risk of errors.  
-
-This project aims to build a **robust and efficient system for stock price prediction** that utilizes machine learning techniques to enhance the accuracy and reliability of stock forecasts.  
-
----
-
-🚀 **Project Description** :
-
-The **Stock Price Prediction** project employs three machine learning models:  
-- **LSTM (Long Short-Term Memory)**  
-- **KNN (K-Nearest Neighbors)**  
-- **Decision Tree**  
-
-Additionally, a **merged model** combining these approaches is developed for enhanced prediction accuracy.  
-
-📊 **Data Source:** We utilize the **Yahoo Live Dataset**, extracting features like:  
-- Opening Value  
-- Closing Value  
-- Stock High  
-- Stock Volume  
-
-The project provides **comparative analysis** among the models (LSTM vs. KNN vs. Decision Tree) to determine the best-performing approach. The results are displayed in a **Streamlit web application**, offering an interactive and user-friendly interface.  
-
----
-
-## 🛠️ Tech Stack :
-
-- **Programming Language:** Python  
-- **Libraries:**  
-  - `NumPy`  
-  - `Pandas`  
-  - `Matplotlib`  
-  - `Scikit-learn`  
-  - `TensorFlow`  
-  - `PyTorch`  
-  - `Streamlit`  
-
----
-
-## 📥 Installation Instructions :
-
-To set up the project, follow these steps:  
-
-1️⃣ **Clone the Repository**  
-```
-git clone https://github.com/AbhishekBajpai-AB/stock-price-prediction.git
-cd stock-price-prediction
-```
-
-2️⃣ **Create a Virtual Environment (Optional but Recommended)**  
-```
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3️⃣ **Install Dependencies**  
-```
+```powershell
+py -3.11 -m venv .venv311
+.\.venv311\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install -r requirements.txt
+python -m streamlit run "MERGED MODELS/real.py"
 ```
 
-4️⃣ **Run the Streamlit Web Application**  
-```
-streamlit run app.py
-```
+Open the local URL printed by Streamlit, usually `http://localhost:8501`. The first LSTM run can take a little while; results are cached for the same stock and history. An internet connection is required to download market prices from Yahoo Finance.
 
----
+## Deploy on Streamlit Community Cloud
 
-## 📊 Usage :
+Choose the GitHub repository `AbhishekBajpai-AB/Dynamic--Stock--Price--Prediction`, branch `main`, and entrypoint `MERGED MODELS/real.py`. Select Python 3.11 in the app's advanced settings. The root `requirements.txt` installs the app dependencies.
 
-Once the Streamlit application is running, users can:  
-✅ Input stock symbols to fetch real-time data.  
-✅ Select prediction models (LSTM, KNN, Decision Tree, or Merged Model).  
-✅ View stock price predictions with visual graphs and performance comparisons.  
+## Project files
 
----
+- `MERGED MODELS/real.py` — Streamlit dashboard and prediction workflow.
+- `MERGED MODELS/lstm_trainer.py` — isolated TensorFlow training process for the LSTM forecast.
+- `LSTM/` — LSTM training notebooks and the notebook's saved model artifact.
+- `KNN/` — KNN exploration notebook.
+- `Decision Tree/` — Decision Tree notebook and its training artifact.
+- `PROJECT REPORT/` and `VISUALISATION/` — project report and figures.
 
-## 🤝 Contributing :
+## Data and limitations
 
-Contributions are welcome! If you want to improve the project, follow these steps:  
-1. Fork the repository  
-2. Create a new branch (`git checkout -b feature-branch`)  
-3. Make your changes  
-4. Commit and push your changes (`git commit -m "Added new feature"`)  
-5. Open a pull request  
+Yahoo Finance availability, symbols, and historical coverage can change. The app stops with a message when no data is returned or when the selected range is too short. Model scores describe the selected historical holdout only; they do not guarantee future performance.
 
----
+## License
 
-## 📝 License :
-
-This project is licensed under the **MIT License**.  
-
----
-
-## 📧 Contact :
-
-For any questions or suggestions, feel free to reach out:  
-📩 **Your Email**: [ab7759081@gmail.com]  
-🔗 **GitHub**: [your-github-profile](https://github.com/AbhishekBajpai-AB)  
+This project is released under the MIT License. See [LICENSE](LICENSE).
