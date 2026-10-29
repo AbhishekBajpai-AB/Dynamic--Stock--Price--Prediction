@@ -1,11 +1,10 @@
-streamlit
+streamlit==1.66.1
 numpy<2.0
+# PyArrow 26 requires NumPy 2, while TensorFlow in this project uses NumPy 1.x.
+pyarrow==18.1.0
 pandas<3.0
 matplotlib
 yfinance
-plotly
-prophet
 scikit-learn
 tensorflow>=2.16.0,<3.0.0
 joblib
-quandl

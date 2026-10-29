@@ -1,15 +1,15 @@
 # Importing all necessary libraries.
 import numpy as np
+# TensorFlow must load before pandas on this Windows environment.  Pandas loads
+# native libraries that can otherwise prevent TensorFlow's DLL from initializing.
+from tensorflow.keras.models import load_model
 import pandas as pd
 import yfinance as yf
-from tensorflow.keras.models import load_model
 import streamlit as st
 import matplotlib.pyplot as plt
 import joblib
 
-from datetime import date
-from plotly import graph_objs as go
-from prophet.plot import plot_plotly
+from datetime import date, timedelta
 
 st.set_page_config(layout="wide")
 alpha, beta, gamma = st.columns((4.1,5,3))
@@ -25,24 +25,50 @@ list=['Select Stock','AAPL','AMZN','GOOGL','GOOG','TSLA','FB'
 ,'NVDA','V']
 
 stock = st.selectbox('Select Stock', list)
-df1 = yf.Ticker(stock)
-                 
+today = date.today()
+default_start = today - timedelta(days=5 * 365)
 j,k= st.columns(2)
-starting = j.date_input('Pick a starting Date')
-ending = k.date_input('Pick an ending date')
+starting = j.date_input('Pick a starting Date', value=default_start, max_value=today)
+ending = k.date_input('Pick an ending date', value=today, max_value=today)
+
+if stock == 'Select Stock':
+    st.info('Choose a stock to view its market data and predictions.')
+    st.stop()
+
+if starting >= ending:
+    st.error('The ending date must be later than the starting date.')
+    st.stop()
+
+df1 = yf.Ticker(stock)
 
 st.write("\n")
 st.write("\n")
 rhs, rh, rhs1 = st.columns((3,3,2))
 rh.markdown("### Let's have a look at raw data")
 def load_data(ticker):
-    df = yf.download(stock, starting, ending)
+    df = yf.download(ticker, start=starting, end=ending, auto_adjust=False, progress=False)
     df.reset_index(inplace=True)
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = [column[0] for column in df.columns]
     return df
 
-df = load_data(df1)
+df = load_data(stock)
+
+if df.empty:
+    st.error('No market data was found for the selected stock and dates.')
+    st.stop()
+
+if len(df) < 250:
+    st.warning('Choose a date range with at least 250 trading days for all prediction models.')
+    st.stop()
+
 rds, rd, rds1 = st.columns((2.5,5,1))
-rd.write(df)
+
+raw_data = df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']].head(10).copy()
+raw_data['Date'] = pd.to_datetime(raw_data['Date']).dt.strftime('%d %b %Y')
+raw_data[['Open', 'High', 'Low', 'Close']] = raw_data[['Open', 'High', 'Low', 'Close']].round(2)
+raw_data['Volume'] = raw_data['Volume'].map('{:,.0f}'.format)
+rd.dataframe(raw_data, hide_index=True, width="stretch", height=420)
 tickerDF = df1.history(start=starting, end=ending)
 
 
@@ -108,12 +134,6 @@ st.write('\n')
 predictions_classification = model.predict(X_test)
 
 actual_predicted_data = pd.DataFrame({'Actual Class': y_test.ravel(), 'Predicted Class': predictions_classification.ravel()})
-actual_predicted_data.head(10)
-x, y, z = st.columns((2.7,3,4))
-x.markdown("""### KNN CLASSIFIER""")
-z.markdown("""### KNN REGRESSION""")
-p, q, r = st.columns((1.3,5,3))
-q.write(actual_predicted_data)
 
 y = df['Close']
 
@@ -134,8 +154,25 @@ predictions = model_reg.predict(X_test_reg)
 
 valid = pd.DataFrame({'Actual Price': y_test_reg.values.ravel(), 'Predicted Price value': predictions.ravel()})
 
+classifier_column, regression_column = st.columns(2, gap="large")
 
-r.write(valid)
+with classifier_column:
+    st.subheader('KNN Classifier')
+    st.dataframe(
+        actual_predicted_data.head(10),
+        hide_index=True,
+        width="stretch",
+        height=420,
+    )
+
+with regression_column:
+    st.subheader('KNN Regression')
+    st.dataframe(
+        valid.head(10),
+        hide_index=True,
+        width="stretch",
+        height=420,
+    )
 
 #rmse
 rms=np.sqrt(np.mean(np.power((np.array(predictions)),2)))
@@ -174,7 +211,7 @@ ma_50_days = df.Close.rolling(50).mean()
 fig1, ax1 = plt.subplots(figsize=(13, 6))
 ax1.plot(ma_50_days, 'y')
 ax1.plot(df.Close, 'g')
-st.plotly_chart(fig1)
+st.pyplot(fig1, width="stretch")
 
 st.subheader('Price vs MA50 vs MA100')
 ma_100_days = df.Close.rolling(100).mean()
@@ -182,7 +219,7 @@ fig2, ax2 = plt.subplots(figsize=(13, 6))
 ax2.plot(ma_50_days, 'y')
 ax2.plot(ma_100_days, 'b')
 ax2.plot(df.Close, 'g')
-st.plotly_chart(fig2)
+st.pyplot(fig2, width="stretch")
 
 st.subheader('Price vs MA100 vs MA200')
 ma_200_days = df.Close.rolling(200).mean()
@@ -190,7 +227,7 @@ fig3, ax3 = plt.subplots(figsize=(13, 6))
 ax3.plot(ma_100_days, 'b')
 ax3.plot(ma_200_days, 'orange')
 ax3.plot(df.Close, 'g')
-st.plotly_chart(fig3)
+st.pyplot(fig3, width="stretch")
 
 x = []
 y = []
@@ -216,7 +253,7 @@ ax4.plot(df.Close, 'g', label='Original Price')
 plt.xlabel('Time in days')
 plt.ylabel('Price')
 plt.legend()
-st.plotly_chart(fig4)
+st.pyplot(fig4, width="stretch")
 rm=np.sqrt(np.mean(np.power((np.array(predict)),2)))
 st.write('RMSE : ',rm)
 
